@@ -1,0 +1,38 @@
+openapi: 3.0.3
+info: { title: Distributed Sync System API, version: "1.0.0" }
+servers: [{ url: http://localhost:8080 }]
+paths:
+  /health:
+    get: { summary: Health, responses: { '200': { description: OK } } }
+  /lock/acquire:
+    post:
+      summary: Acquire lock (s|x)
+      requestBody:
+        required: true
+        content: { application/json: { schema:
+          { type: object, properties:
+            { resource: {type: string}, owner: {type: string}, mode: {type: string, enum: [s,x]} } } } }
+      responses: { '200': { description: ok } }
+  /lock/release:
+    post:
+      summary: Release lock
+      requestBody:
+        required: true
+        content: { application/json: { schema:
+          { type: object, properties: { resource: {type: string}, owner: {type: string} } } } }
+      responses: { '200': { description: ok } }
+  /queue/produce:
+    post: { summary: Produce, responses: { '200': { description: ok } } }
+  /queue/consume:
+    get:
+      summary: Consume
+      parameters:
+        - in: query; name: topic; schema: {type: string}
+        - in: query; name: max; schema: {type: integer, default: 10}
+        - in: query; name: visibility_ttl; schema: {type: integer, default: 30}
+      responses: { '200': { description: ok } }
+  /queue/ack:
+    post: { summary: Ack, responses: { '200': { description: ok } } }
+  /cache/{key}:
+    get: { summary: Get, parameters: [{in: path, name: key, required: true, schema: {type: string}}], responses: {'200': {description: ok}} }
+    put: { summary: Put, parameters: [{in: path, name: key, required: true, schema: {type: string}}], responses: {'200': {description: ok}} }
