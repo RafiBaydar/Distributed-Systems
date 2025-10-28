@@ -1,5 +1,4 @@
 # docker/docker-compose.yml
-
 x-node-build: &node-build
   context: ..
   dockerfile: docker/Dockerfile.node
@@ -12,30 +11,32 @@ services:
   node1:
     build: *node-build
     environment:
-      - NODE_ID=node-1
+      - NODE_ID=node1
       - HTTP_PORT=8080
-      # Gunakan NAMA SERVICE, bukan localhost
       - PEERS=node1:8080,node2:8081,node3:8082
       - REDIS_URL=redis://redis:6379/0
+      - CLIENT_ADVERTISE=http://localhost:8080
     depends_on: [redis]
     ports: ["8080:8080"]
 
   node2:
     build: *node-build
     environment:
-      - NODE_ID=node-2
+      - NODE_ID=node2
       - HTTP_PORT=8081
       - PEERS=node1:8080,node2:8081,node3:8082
       - REDIS_URL=redis://redis:6379/0
+      - CLIENT_ADVERTISE=http://localhost:8081
     depends_on: [redis]
     ports: ["8081:8081"]
 
   node3:
     build: *node-build
     environment:
-      - NODE_ID=node-3
+      - NODE_ID=node3
       - HTTP_PORT=8082
       - PEERS=node1:8080,node2:8081,node3:8082
       - REDIS_URL=redis://redis:6379/0
+      - CLIENT_ADVERTISE=http://localhost:8082
     depends_on: [redis]
     ports: ["8082:8082"]
